@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.utils.translation import gettext_lazy as _
 from django.db import models
 
@@ -15,3 +17,12 @@ class Customer(TimeTrackedModel, UUIDModel):
 
     def __str__(self):
         return f"{self.first_name}-{self.last_name}"
+
+    @property
+    def age(self):
+        today = date.today()
+        return (
+            today.year
+            - self.dob.year
+            - ((today.month, today.day) < (self.dob.month, self.dob.day))
+        )
