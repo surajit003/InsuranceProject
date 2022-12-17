@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     "api.v1.accounts",
     "api.v1.common",
     "api.v1.customer",
+    "api.v1.policy",
+    "api.v1.quote",
     # third party apps
     "rest_framework",
     "rest_framework_simplejwt",
