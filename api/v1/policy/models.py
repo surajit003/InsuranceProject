@@ -20,8 +20,8 @@ class Policy(TimeTrackedModel, UUIDModel):
     )
 
     type = models.CharField(_("Policy Type"), max_length=120)
-    premium = models.IntegerField(_("Premium Amount"))
-    cover = models.IntegerField(_("Cover"))
+    premium = models.IntegerField(_("Premium Amount"), null=True, blank=True)
+    cover = models.IntegerField(_("Cover"), null=True, blank=True)
     state = models.PositiveSmallIntegerField(
         choices=POLICY_STATUS_CHOICES, default=STATUS_NEW, db_index=True
     )
