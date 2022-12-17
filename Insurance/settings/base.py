@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     "api.v1.accounts",
     "api.v1.common",
     "api.v1.customer",
-    # installed apps
+    # third party apps
     "rest_framework",
     "rest_framework_simplejwt",
 ]
@@ -135,9 +135,10 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 LOGOUT_REDIRECT_URL = "/accounts/login/"
 
 REST_FRAMEWORK = {
+    "DATE_INPUT_FORMATS": ["%d-%m-%Y"],
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-    )
+    ),
 }
 
 SIMPLE_JWT = {
