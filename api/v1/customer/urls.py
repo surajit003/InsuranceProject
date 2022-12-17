@@ -7,5 +7,5 @@ app_name = "customer"
 
 
 urlpatterns = [
-    path("customers/", CustomerAPIView.as_view(), name="customers"),
+    path("create_customer/", CustomerAPIView.as_view(), name="create-customer"),
 ]
