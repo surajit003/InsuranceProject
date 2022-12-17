@@ -31,3 +31,6 @@ class Policy(TimeTrackedModel, UUIDModel):
 
     def __str__(self):
         return f"Policy for {self.customer} for cover {self.cover}"
+
+    class Meta:
+        verbose_name_plural = "Policies"
