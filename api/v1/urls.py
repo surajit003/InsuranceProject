@@ -5,4 +5,5 @@ app_name = "v1"
 
 urlpatterns = [
     path("", include("api.v1.customer.urls")),
+    path("", include("api.v1.policy.urls")),
 ]

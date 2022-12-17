@@ -1,11 +1,11 @@
 from django.urls import path
 
-from .views import PolicyAPIView
+from .views import QuoteAPIView
 
 
-app_name = "customer"
+app_name = "policy"
 
 
 urlpatterns = [
-    path("quote/", PolicyAPIView.as_view(), name="policy"),
+    path("quote/", QuoteAPIView.as_view(), name="quote"),
 ]
