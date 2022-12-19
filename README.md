@@ -30,7 +30,7 @@ Install
 * python manage.py runserver
 
 
-To run tests, linter etc you can
+To run tests you can
 
 ```
 pytest -v
