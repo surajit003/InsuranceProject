@@ -16,7 +16,7 @@ from api.v1.policy.serializers import (
 )
 
 
-class PolicyAPIView(APIView):
+class PolicyCreateAPIView(APIView):
     def post(self, request):
         data = request.data
         serializer = PolicyCreateSerializer(data=data)

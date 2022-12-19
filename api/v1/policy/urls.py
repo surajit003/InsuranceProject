@@ -1,16 +1,16 @@
 from django.urls import path
 
-from .views import PolicyAPIView, PolicyRetrieveUpdateAPIView, PolicyListAPIView
+from .views import PolicyCreateAPIView, PolicyRetrieveUpdateAPIView, PolicyListAPIView
 
 app_name = "policy"
 
 
 urlpatterns = [
-    path("quote/", PolicyAPIView.as_view(), name="quote-create"),
+    path("quote/", PolicyCreateAPIView.as_view(), name="create-quote"),
     path(
         "quotes/<uuid:uuid>/",
         PolicyRetrieveUpdateAPIView.as_view(),
-        name="quote-detail",
+        name="quote",
     ),
-    path("quotes/", PolicyListAPIView.as_view(), name="quote-list"),
+    path("quotes/", PolicyListAPIView.as_view(), name="quotes"),
 ]
