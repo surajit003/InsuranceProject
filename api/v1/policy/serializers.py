@@ -2,22 +2,29 @@ from rest_framework import serializers
 
 from api.v1.customer.exceptions import CustomerDoesNotExistException
 from api.v1.customer.models import Customer
+from api.v1.customer.serializers import CustomerSerializer
+from api.v1.policy.exceptions import InvalidPolicyStateError
 from api.v1.policy.models import Policy
 
+STATUS_MAP = {
+    "0": "New",
+    "1": "Accepted",
+    "2": "Paid",
+}
 
-class QuoteSerializer(serializers.ModelSerializer):
+
+class PolicyCreateSerializer(serializers.ModelSerializer):
     customer_id = serializers.IntegerField(source="customer")
 
     class Meta:
         model = Policy
         fields = [
-            "customer_id",
             "type",
-            "cover",
-            "premium",
+            "customer_id",
         ]
 
-    def _generate_policy_criteria(self, customer):
+    @staticmethod
+    def _generate_policy_criteria(customer):
         age = customer.age
         cover = 0
         premium = 0
@@ -39,3 +46,54 @@ class QuoteSerializer(serializers.ModelSerializer):
         return Policy.objects.create(
             type=type_, customer=customer, premium=premium, cover=cover
         )
+
+
+class PolicyBaseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Policy
+        fields = [
+            "cover",
+            "premium",
+            "state",
+            "type",
+        ]
+
+
+class PolicyWithCustomerDetailSerializer(PolicyBaseSerializer):
+    customer = CustomerSerializer()
+
+    class Meta:
+        model = Policy
+        fields = PolicyBaseSerializer.Meta.fields + [
+            "customer",
+        ]
+
+
+class PolicyPutOrPatchSerializer(PolicyBaseSerializer):
+    def update(self, instance, validated_data):
+        if self.partial:
+            # This is a bad idea to manage state transition like this. django-fsm is a good library
+            # to use in this scenario
+            if "state" in validated_data:
+                self._check_policy_state(validated_data, instance)
+            Policy.objects.filter(id=instance.id).update(**validated_data)
+        return Policy.objects.filter(id=instance.id).first()
+
+    @staticmethod
+    def _check_policy_state(validated_data, instance):
+
+        policy = Policy.objects.filter(id=instance.id).first()
+        current_state = policy.state
+
+        target_state = validated_data.get("state")
+
+        if current_state == "ACTIVE" and target_state == "ACCEPTED":
+            raise InvalidPolicyStateError
+
+        if target_state == "ACTIVE":
+            if current_state == "NEW":
+                raise InvalidPolicyStateError
+
+        elif target_state == "NEW" and current_state in ["ACTIVE", "ACCEPTED"]:
+            raise InvalidPolicyStateError
+        return True

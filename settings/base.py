@@ -27,7 +27,7 @@ DEBUG = config("DEBUG_MODE")
 
 ALLOWED_HOSTS = [
     "*",
-]
+]  # Less secure
 
 # Application definition
 
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     # third party apps
     "rest_framework",
     "rest_framework_simplejwt",
+    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -139,6 +140,9 @@ REST_FRAMEWORK = {
     "DATE_INPUT_FORMATS": ["%d-%m-%Y"],
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
     ),
 }
 

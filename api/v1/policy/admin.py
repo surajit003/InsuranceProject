@@ -11,7 +11,6 @@ class PolicyAdmin(admin.ModelAdmin):
         "uuid",
         "created",
         "modified",
-        "state",
     )
     search_fields = [
         "id",
@@ -23,10 +22,15 @@ class PolicyAdmin(admin.ModelAdmin):
         "type",
         "cover",
         "customer",
-        "state",
+        "get_state",
     ]
     list_filter = [
         "state",
         "customer",
         "modified",
     ]
+
+    def get_state(self, obj):
+        return obj.get_state_display()
+
+    get_state.short_description = "State"

@@ -1,11 +1,12 @@
 from django.urls import path
 
-from .views import CustomerAPIView
-
+from .views import CustomerCreateAPIView, CustomerListAPIView, CustomerRetrieveAPIView
 
 app_name = "customer"
 
 
 urlpatterns = [
-    path("create_customer/", CustomerAPIView.as_view(), name="create-customer"),
+    path("create_customer/", CustomerCreateAPIView.as_view(), name="create-customer"),
+    path("customers/<uuid:uuid>/", CustomerRetrieveAPIView.as_view(), name="customer"),
+    path("customers/", CustomerListAPIView.as_view(), name="customers"),
 ]

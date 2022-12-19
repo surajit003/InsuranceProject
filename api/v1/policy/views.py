@@ -1,15 +1,25 @@
+from rest_framework.generics import ListAPIView, RetrieveAPIView
+from django_filters import rest_framework as filters
+
+from .exceptions import InvalidPolicyStateError
+from .filters import PolicyFilterSet
+from .models import Policy
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.v1.customer.exceptions import CustomerDoesNotExistException
-from api.v1.policy.serializers import QuoteSerializer
+from api.v1.policy.serializers import (
+    PolicyCreateSerializer,
+    PolicyWithCustomerDetailSerializer,
+    PolicyPutOrPatchSerializer,
+)
 
 
-class QuoteAPIView(APIView):
+class PolicyAPIView(APIView):
     def post(self, request):
         data = request.data
-        serializer = QuoteSerializer(data=data)
+        serializer = PolicyCreateSerializer(data=data)
         if serializer.is_valid():
             validated_data = dict(serializer.validated_data)
             try:
@@ -20,3 +30,32 @@ class QuoteAPIView(APIView):
                 )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, uuid=None):
+        policy = Policy.objects.filter(uuid=uuid).first()
+        serializer = PolicyPutOrPatchSerializer(
+            instance=policy, data=request.data, partial=True
+        )
+        if serializer.is_valid():
+            validated_data = dict(serializer.validated_data)
+            try:
+                policy = serializer.update(policy, validated_data)
+            except InvalidPolicyStateError:
+                return Response(data={"detail": "Invalid state change requested"})
+            policy_dict = PolicyPutOrPatchSerializer(policy)
+            return Response(data=policy_dict.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PolicyListAPIView(ListAPIView):
+    queryset = Policy.objects.all()
+    serializer_class = PolicyWithCustomerDetailSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = PolicyFilterSet
+
+
+class PolicyRetrieveAPIView(RetrieveAPIView):
+    queryset = Policy.objects.all()
+    serializer_class = PolicyWithCustomerDetailSerializer
+    lookup_field = "uuid"
+    action = "retrieve"

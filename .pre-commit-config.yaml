@@ -1,0 +1,38 @@
+exclude: 'docs|migrations|.git'
+default_stages: [commit]
+fail_fast: true
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.4.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: debug-statements
+      - id: name-tests-test
+
+  - repo: https://github.com/psf/black
+    rev: 22.3.0
+    hooks:
+      - id: black
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 3.8.4
+    hooks:
+      - id: flake8
+        additional_dependencies: [flake8-typing-imports==1.7.0]
+
+  - repo: local
+    hooks:
+      - id: pytest-check
+        name: pytest-check
+        stages: [ commit ]
+        types: [ python ]
+        entry: pytest -vv  --cov --cov-fail-under=70 -n auto --cov-report=term-missing
+        language: system
+        pass_filenames: false
+        always_run: true
+        files: .*\_tests.py$

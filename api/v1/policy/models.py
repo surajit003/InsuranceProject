@@ -3,15 +3,14 @@ from simple_history.models import HistoricalRecords
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-# Create your models here.
 from api.v1.common.models import UUIDModel, TimeTrackedModel
 from api.v1.customer.models import Customer
 
 
 class Policy(TimeTrackedModel, UUIDModel):
-    STATUS_NEW = 0
-    STATUS_ACCEPTED = 1
-    STATUS_ACTIVE = 2
+    STATUS_NEW = "NEW"
+    STATUS_ACCEPTED = "ACCEPTED"
+    STATUS_ACTIVE = "ACTIVE"
 
     POLICY_STATUS_CHOICES = (
         (STATUS_NEW, "New"),
@@ -22,8 +21,8 @@ class Policy(TimeTrackedModel, UUIDModel):
     type = models.CharField(_("Policy Type"), max_length=120)
     premium = models.IntegerField(_("Premium Amount"), null=True, blank=True)
     cover = models.IntegerField(_("Cover"), null=True, blank=True)
-    state = models.PositiveSmallIntegerField(
-        choices=POLICY_STATUS_CHOICES, default=STATUS_NEW, db_index=True
+    state = models.CharField(
+        choices=POLICY_STATUS_CHOICES, default=STATUS_NEW, db_index=True, max_length=20
     )
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, db_index=True)
 
