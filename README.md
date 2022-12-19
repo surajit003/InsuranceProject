@@ -13,14 +13,6 @@ We're using:
  
 * Run `Insurance`
 
-1. Install `docker` and `docker-compose`
-2. Run docker-compose to bring up the environment:
-    ```
-    docker-compose up 
-    ```
-   
-
-* Run `Insurance` outside Docker
 1. Create a virtualenv
     ```
     python3.9 -m venv {env_location}
