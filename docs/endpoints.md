@@ -21,3 +21,14 @@
 ## Open endpoints
 By default, all endpoints are kept open which is a bad idea. However, the initial set up for JWT Token Auth
 is added in the project which can be easily plugged into the routes.
+
+### Policy State transition management
+In the current implementation, the state management is very if..else heavy which is not the right approach.
+A better approach would be to use the django_fsm library. However, the current implementation is very strict
+with the state transition .
+ 1. NEW -> ACCEPTED -> ACTIVE
+
+* A policy already in active state cannot be changed back to accepted/new state
+* A policy in new state cannot directly be changed to active without first changing to accepted
+* A policy marked as accepted automatically transitions to active with a simulated payment made for the policy.
+
