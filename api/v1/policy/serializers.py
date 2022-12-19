@@ -76,7 +76,11 @@ class PolicyPutOrPatchSerializer(PolicyBaseSerializer):
             # to use in this scenario
             if "state" in validated_data:
                 self._check_policy_state(validated_data, instance)
-            Policy.objects.filter(id=instance.id).update(**validated_data)
+            policy = Policy.objects.get(id=instance.id)
+            # as of now it only makes sense to update the state as this is based on the user feedback if they accept
+            # or not
+            policy.state = validated_data.get("state", instance.state)
+            policy.save()
         return Policy.objects.filter(id=instance.id).first()
 
     @staticmethod
@@ -87,13 +91,13 @@ class PolicyPutOrPatchSerializer(PolicyBaseSerializer):
 
         target_state = validated_data.get("state")
 
-        if current_state == "ACTIVE" and target_state == "ACCEPTED":
+        if current_state == "active" and target_state == "accepted":
             raise InvalidPolicyStateError
 
-        if target_state == "ACTIVE":
-            if current_state == "NEW":
+        if target_state == "active":
+            if current_state == "new":
                 raise InvalidPolicyStateError
 
-        elif target_state == "NEW" and current_state in ["ACTIVE", "ACCEPTED"]:
+        elif target_state == "new" and current_state in ["active", "accepted"]:
             raise InvalidPolicyStateError
         return True

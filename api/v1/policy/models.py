@@ -8,9 +8,9 @@ from api.v1.customer.models import Customer
 
 
 class Policy(TimeTrackedModel, UUIDModel):
-    STATUS_NEW = "NEW"
-    STATUS_ACCEPTED = "ACCEPTED"
-    STATUS_ACTIVE = "ACTIVE"
+    STATUS_NEW = "new"
+    STATUS_ACCEPTED = "accepted"
+    STATUS_ACTIVE = "active"
 
     POLICY_STATUS_CHOICES = (
         (STATUS_NEW, "New"),
