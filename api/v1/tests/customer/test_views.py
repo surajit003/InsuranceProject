@@ -60,3 +60,41 @@ def test_customers(client):
     assert response.status_code == 200
     assert resp_json
     assert len(resp_json) == 2
+
+
+def test_customers_search_by_first_name(client):
+    customer_1 = mixer.blend(Customer, first_name="test")
+    mixer.blend(Customer, first_name="user")
+    response = client.get(f"/api/v1/customers/?first_name={customer_1.first_name}")
+    resp_json = response.json()
+    assert response.status_code == 200
+    assert resp_json
+    assert len(resp_json) == 1
+    assert resp_json[0]["first_name"] == customer_1.first_name
+    assert resp_json[0]["last_name"] == customer_1.last_name
+
+
+def test_customers_search_by_last_name(client):
+    mixer.blend(Customer, last_name="test")
+    customer_2 = mixer.blend(Customer, last_name="user")
+    response = client.get(f"/api/v1/customers/?last_name={customer_2.last_name}")
+    resp_json = response.json()
+    assert response.status_code == 200
+    assert resp_json
+    assert len(resp_json) == 1
+    assert resp_json[0]["first_name"] == customer_2.first_name
+    assert resp_json[0]["last_name"] == customer_2.last_name
+
+
+def test_customers_search_by_dob(client):
+    mixer.blend(Customer, dob="1990-03-21")
+    customer_2 = mixer.blend(Customer, dob="1985-03-22")
+    response = client.get(f"/api/v1/customers/?dob={customer_2.dob}")
+    resp_json = response.json()
+    assert response.status_code == 200
+    assert resp_json
+    assert len(resp_json) == 1
+
+    assert resp_json[0]["first_name"] == customer_2.first_name
+    assert resp_json[0]["last_name"] == customer_2.last_name
+    assert resp_json[0]["dob"] == str(customer_2.dob)

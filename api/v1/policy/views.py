@@ -1,4 +1,4 @@
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
 from django_filters import rest_framework as filters
 
 from .exceptions import InvalidPolicyStateError
@@ -31,8 +31,22 @@ class PolicyAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def patch(self, request, uuid=None):
-        policy = Policy.objects.filter(uuid=uuid).first()
+
+class PolicyListAPIView(ListAPIView):
+    queryset = Policy.objects.all()
+    serializer_class = PolicyWithCustomerDetailSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = PolicyFilterSet
+
+
+class PolicyRetrieveUpdateAPIView(RetrieveUpdateAPIView):
+    queryset = Policy.objects.all()
+    serializer_class = PolicyWithCustomerDetailSerializer
+    lookup_field = "uuid"
+    action = "retrieve"
+
+    def patch(self, request, *args, **kwargs):
+        policy = Policy.objects.filter(uuid=str(kwargs.get("uuid"))).first()
         serializer = PolicyPutOrPatchSerializer(
             instance=policy, data=request.data, partial=True
         )
@@ -45,17 +59,3 @@ class PolicyAPIView(APIView):
             policy_dict = PolicyPutOrPatchSerializer(policy)
             return Response(data=policy_dict.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class PolicyListAPIView(ListAPIView):
-    queryset = Policy.objects.all()
-    serializer_class = PolicyWithCustomerDetailSerializer
-    filter_backends = (filters.DjangoFilterBackend,)
-    filterset_class = PolicyFilterSet
-
-
-class PolicyRetrieveAPIView(RetrieveAPIView):
-    queryset = Policy.objects.all()
-    serializer_class = PolicyWithCustomerDetailSerializer
-    lookup_field = "uuid"
-    action = "retrieve"

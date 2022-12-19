@@ -37,24 +37,33 @@ def test_get_quote(client):
     )
     resp_json = response.json()
     assert response.status_code == 200
-    assert resp_json["policies"]["cover"] == 200000
-    assert resp_json["policies"]["premium"] == 100
-    assert resp_json["policies"]["customer"]
+    assert resp_json["cover"] == 200000
+    assert resp_json["premium"] == 100
+    assert resp_json["customer"]
 
 
-def test_search_quotes_by_customer_id(client):
+def test_search_policies_by_customer_id(client):
     customer = mixer.blend(Customer)
     mixer.blend(Policy, customer=customer)
     mixer.blend(Policy, customer=customer)
     response = client.get(
-        f"/api/v1/quotes?customer={customer.id}",
+        f"/api/v1/quotes/?customer_id={customer.id}",
     )
     resp_json = response.json()
     assert response.status_code == 200
-    assert resp_json["policies"]
-    assert len(resp_json["policies"]) == 2
-    assert resp_json["policies"][0]["customer"]["first_name"] == customer.first_name
-    assert resp_json["policies"][0]["customer"]["last_name"] == customer.last_name
+    assert len(resp_json) == 2
+
+
+def test_search_policies_by_policy_type(client):
+    policy_1 = mixer.blend(Policy, type="health benefit")
+    mixer.blend(Policy, type="accident")
+    response = client.get(
+        f"/api/v1/quotes/?type={policy_1.type}",
+    )
+    resp_json = response.json()
+    assert response.status_code == 200
+    assert len(resp_json) == 1
+    assert resp_json[0]["type"] == policy_1.type
 
 
 def test_update_quote_status_as_accepted(client):
