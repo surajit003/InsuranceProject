@@ -19,5 +19,5 @@
 
 
 ## Open endpoints
-By default all endpoints are kept open which is a bad idea. However, the initial set up for JWT Token Auth
+By default, all endpoints are kept open which is a bad idea. However, the initial set up for JWT Token Auth
 is added in the project which can be easily plugged into the routes.
