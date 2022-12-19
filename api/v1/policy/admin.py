@@ -11,6 +11,7 @@ class PolicyAdmin(admin.ModelAdmin):
         "uuid",
         "created",
         "modified",
+        "state",
     )
     search_fields = [
         "id",

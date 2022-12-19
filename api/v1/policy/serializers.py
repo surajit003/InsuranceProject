@@ -56,6 +56,7 @@ class PolicyBaseSerializer(serializers.ModelSerializer):
             "premium",
             "state",
             "type",
+            "uuid",
         ]
 
 

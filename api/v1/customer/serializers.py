@@ -10,4 +10,5 @@ class CustomerSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "dob",
+            "uuid",
         ]
