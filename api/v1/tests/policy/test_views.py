@@ -68,34 +68,24 @@ def test_search_policies_by_policy_type(client):
 
 def test_update_quote_status_as_accepted(client):
     policy = mixer.blend(Policy)
-    assert policy.state == "NEW"
+    assert policy.state == "new"
     response = client.patch(
         f"/api/v1/quotes/{policy.uuid}/",
-        data={"state": "ACCEPTED"},
+        data={"state": "accepted"},
         content_type="application/json",
     )
-    resp_json = response.json()
-    assert resp_json["state"] == "ACCEPTED"
-
-
-def test_update_quote_status_as_paid(client):
-    policy = mixer.blend(Policy, state="ACCEPTED")
-    assert policy.state == "ACCEPTED"
-    response = client.patch(
-        f"/api/v1/quotes/{policy.uuid}/",
-        data={"state": "ACTIVE"},
-        content_type="application/json",
-    )
-    resp_json = response.json()
-    assert resp_json["state"] == "ACTIVE"
+    assert response.status_code == 200
+    # lets check if the state was now marked as paid simulating the payment flow in signals
+    policy = Policy.objects.filter(id=policy.id).first()
+    assert policy.state == "active"
 
 
 def test_update_quote_status_from_new_to_active(client):
-    policy = mixer.blend(Policy, state="NEW")
-    assert policy.state == "NEW"
+    policy = mixer.blend(Policy, state="new")
+    assert policy.state == "new"
     response = client.patch(
         f"/api/v1/quotes/{policy.uuid}/",
-        data={"state": "ACTIVE"},
+        data={"state": "active"},
         content_type="application/json",
     )
     resp_json = response.json()
@@ -103,23 +93,11 @@ def test_update_quote_status_from_new_to_active(client):
 
 
 def test_update_quote_status_from_active_to_new(client):
-    policy = mixer.blend(Policy, state="ACTIVE")
-    assert policy.state == "ACTIVE"
+    policy = mixer.blend(Policy, state="active")
+    assert policy.state == "active"
     response = client.patch(
         f"/api/v1/quotes/{policy.uuid}/",
-        data={"state": "NEW"},
-        content_type="application/json",
-    )
-    resp_json = response.json()
-    assert resp_json["detail"] == "Invalid state change requested"
-
-
-def test_update_quote_status_from_active_to_accepted(client):
-    policy = mixer.blend(Policy, state="ACTIVE")
-    assert policy.state == "ACTIVE"
-    response = client.patch(
-        f"/api/v1/quotes/{policy.uuid}/",
-        data={"state": "ACCEPTED"},
+        data={"state": "new"},
         content_type="application/json",
     )
     resp_json = response.json()
