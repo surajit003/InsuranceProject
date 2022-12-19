@@ -15,7 +15,7 @@
    3. **/api/v1/quotes}/**: GET all quotes.
    4. **/api/v1/quotes?customer_id="2"**: Search quotes by customer_id.
    5. **/api/v1/quotes/?type="abc"**: Search customers by quote type.
-   6 **/api/v1/quotes/{quote_id}/ - PATCH{"state:"accepted"}**: Update a quote as accepted for a quote_id.
+   6. **/api/v1/quotes/{quote_id}/ - PATCH{"state:"accepted"}**: Update a quote as accepted for a quote_id.
 
 
 ## Open endpoints
