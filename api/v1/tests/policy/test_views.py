@@ -31,7 +31,8 @@ def test_quote_create_raises_validation_error(client):
 
 
 def test_get_quote(client):
-    policy = mixer.blend(Policy, premium=100, cover=200000)
+    customer = mixer.blend(Customer, dob="1990-03-21")
+    policy = mixer.blend(Policy, customer=customer)
     response = client.get(
         f"/api/v1/quotes/{policy.uuid}/",
     )
