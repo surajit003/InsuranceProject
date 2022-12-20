@@ -22,12 +22,7 @@ class PolicyCreateAPIView(APIView):
         serializer = PolicyCreateSerializer(data=data)
         if serializer.is_valid():
             validated_data = dict(serializer.validated_data)
-            try:
-                serializer.create(validated_data)
-            except CustomerDoesNotExistException:
-                return Response(
-                    {"detail": "CustomerNotFound"}, status=status.HTTP_400_BAD_REQUEST
-                )
+            serializer.create(validated_data)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

@@ -37,8 +37,8 @@ def test_get_quote(client):
     )
     resp_json = response.json()
     assert response.status_code == 200
-    assert resp_json["cover"] == 200000
-    assert resp_json["premium"] == 100
+    assert resp_json["cover"] == 2000000
+    assert resp_json["premium"] == 83333
     assert resp_json["customer"]
 
 
