@@ -30,7 +30,7 @@ def test_quote_create_raises_validation_error(client):
     assert resp_json["customer_id"] == ["This field is required."]
 
 
-def test_get_quote(client):
+def test_get_quote_for_above_18_years(client):
     customer = mixer.blend(Customer, dob="1990-03-21")
     policy = mixer.blend(Policy, customer=customer)
     response = client.get(
