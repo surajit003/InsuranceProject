@@ -82,7 +82,7 @@ class PolicyPutOrPatchSerializer(PolicyBaseSerializer):
             # or not
             policy.state = validated_data.get("state", instance.state)
             policy.save()
-        return Policy.objects.filter(id=instance.id).first()
+            return policy
 
     @staticmethod
     def _check_policy_state(validated_data, instance):
