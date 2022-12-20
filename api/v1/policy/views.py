@@ -52,9 +52,6 @@ class PolicyRetrieveUpdateAPIView(RetrieveUpdateAPIView):
         )
         if serializer.is_valid():
             validated_data = dict(serializer.validated_data)
-            try:
-                serializer.update(policy, validated_data)
-            except InvalidPolicyStateError:
-                return Response(data={"detail": "Invalid state change requested"})
+            serializer.update(policy, validated_data)
             return Response(data=serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
