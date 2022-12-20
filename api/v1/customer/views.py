@@ -10,9 +10,6 @@ from api.v1.customer.serializers import CustomerSerializer
 
 
 class CustomerCreateAPIView(APIView):
-    filter_backends = (filters.DjangoFilterBackend,)
-    filterset_class = CustomerFilterSet
-
     def post(self, request):
         data = request.data
         serializer = CustomerSerializer(data=data)
