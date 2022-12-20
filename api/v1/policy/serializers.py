@@ -71,18 +71,31 @@ class PolicyWithCustomerDetailSerializer(PolicyBaseSerializer):
 
 
 class PolicyPutOrPatchSerializer(PolicyBaseSerializer):
-    def update(self, instance, validated_data):
-        if self.partial:
-            # This is a bad idea to manage state transition like this. django-fsm is a good library
-            # to use in this scenario
-            if "state" in validated_data:
-                self._check_policy_state(validated_data, instance)
-            policy = Policy.objects.get(id=instance.id)
-            # as of now it only makes sense to update the state as this is based on the user feedback if they accept
-            # or not
-            policy.state = validated_data.get("state", instance.state)
-            policy.save()
-            return policy
+    def validate(self, data):
+        # very bad idea to manage state transition in if-else blocks
+        if "state" not in data:
+            return data
+        policy = Policy.objects.filter(id=self.instance.id).first()
+        current_state = policy.state
+
+        target_state = data.get("state")
+
+        if current_state == "active" and target_state == "accepted":
+            raise serializers.ValidationError(
+                f"Cannot transition policy state from {current_state} to {target_state}"
+            )
+
+        if target_state == "active":
+            if current_state == "new":
+                raise serializers.ValidationError(
+                    f"Cannot transition policy state from {current_state} to {target_state}"
+                )
+
+        elif target_state == "new" and current_state in ["active", "accepted"]:
+            raise serializers.ValidationError(
+                f"Cannot transition policy state from {current_state} to {target_state}"
+            )
+        return data
 
     @staticmethod
     def _check_policy_state(validated_data, instance):

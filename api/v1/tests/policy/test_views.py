@@ -89,7 +89,10 @@ def test_update_quote_status_from_new_to_active(client):
         content_type="application/json",
     )
     resp_json = response.json()
-    assert resp_json["detail"] == "Invalid state change requested"
+    assert response.status_code == 400
+    assert resp_json["non_field_errors"] == [
+        "Cannot transition policy state from new to active"
+    ]
 
 
 def test_update_quote_status_from_active_to_new(client):
@@ -101,4 +104,7 @@ def test_update_quote_status_from_active_to_new(client):
         content_type="application/json",
     )
     resp_json = response.json()
-    assert resp_json["detail"] == "Invalid state change requested"
+    assert response.status_code == 400
+    assert resp_json["non_field_errors"] == [
+        "Cannot transition policy state from active to new"
+    ]
