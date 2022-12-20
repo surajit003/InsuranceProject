@@ -6,12 +6,6 @@ from api.v1.customer.serializers import CustomerSerializer
 from api.v1.policy.exceptions import InvalidPolicyStateError
 from api.v1.policy.models import Policy
 
-STATUS_MAP = {
-    "0": "New",
-    "1": "Accepted",
-    "2": "Paid",
-}
-
 
 class PolicyCreateSerializer(serializers.ModelSerializer):
     customer_id = serializers.IntegerField(source="customer")
