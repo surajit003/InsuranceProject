@@ -23,7 +23,7 @@ We're using:
     ```
 3. Install the minimum requirements
     ```
-    pip install -r requirements/base.txt
+    pip install -r requirements/prod.txt
     ```
 4. Create a `.env` file with needed environmental variables by copying the example
     ```
